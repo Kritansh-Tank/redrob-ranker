@@ -10,8 +10,8 @@ team_members:
     email: "tankkritansh088@gmail.com"
     role: "Solo Participant"
 
-github_repo: "https://github.com/Kritansh-Tank/redrob-ranker" # TODO: fill in
-sandbox_link: "N/A - solo participant, sandbox pending" # TODO: add HuggingFace space if required
+github_repo: "https://github.com/Kritansh-Tank/redrob-ranker"
+sandbox_link: "https://colab.research.google.com/github/Kritansh-Tank/redrob-ranker/blob/master/redrob_sandbox.ipynb"
 
 reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
 
