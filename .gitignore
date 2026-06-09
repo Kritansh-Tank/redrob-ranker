@@ -3,6 +3,8 @@ candidates.jsonl
 *.jsonl
 *.jsonl.gz
 *.zip
+# Allow sample_candidates.json (small, safe to include)
+!sample_candidates.json
 
 # Mac junk
 __MACOSX/

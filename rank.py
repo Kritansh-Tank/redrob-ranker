@@ -24,9 +24,15 @@ from scorer import score_candidate
 
 
 def load_candidates(path: Path) -> List[Dict[str, Any]]:
-    """Load candidates from a .jsonl file."""
-    candidates = []
+    """Load candidates from a .jsonl file or a .json array file."""
     with open(path, "r", encoding="utf-8") as f:
+        first_char = f.read(1)
+        f.seek(0)
+        # JSON array format (e.g. sample_candidates.json)
+        if first_char == "[":
+            return json.load(f)
+        # JSONL format (one JSON object per line)
+        candidates = []
         for i, line in enumerate(f):
             line = line.strip()
             if not line:
@@ -35,15 +41,16 @@ def load_candidates(path: Path) -> List[Dict[str, Any]]:
                 candidates.append(json.loads(line))
             except json.JSONDecodeError as e:
                 print(f"  [WARN] Skipping malformed line {i+1}: {e}", file=sys.stderr)
-    return candidates
+        return candidates
 
 
 def rank_candidates(
     candidates: List[Dict[str, Any]],
     verbose: bool = False,
+    top_n: int = 100,
 ) -> List[Tuple[str, int, float, str]]:
     """
-    Score all candidates, detect honeypots, return top-100 ranked list.
+    Score all candidates, detect honeypots, return top-N ranked list.
 
     Returns list of (candidate_id, rank, score, reasoning).
     """
@@ -87,8 +94,8 @@ def rank_candidates(
     # ── Sort descending by score, then ascending by candidate_id for ties ─────
     scored.sort(key=lambda x: (-x[0], x[1]))
 
-    # ── Take top 100 ──────────────────────────────────────────────────────────
-    top100 = scored[:100]
+    # ── Take top N ────────────────────────────────────────────────────────────
+    top100 = scored[:top_n]
 
     # ── Assign ranks & normalise scores to [0, 1] non-increasing ─────────────
     max_score = top100[0][0] if top100 else 1.0
@@ -152,13 +159,19 @@ def main():
         "--candidates",
         type=Path,
         required=True,
-        help="Path to candidates.jsonl",
+        help="Path to candidates.jsonl or candidates.json",
     )
     parser.add_argument(
         "--out",
         type=Path,
         default=Path("submission.csv"),
         help="Output CSV path (default: submission.csv)",
+    )
+    parser.add_argument(
+        "--top",
+        type=int,
+        default=100,
+        help="Number of top candidates to output (default: 100). Use a smaller value for sandbox demos.",
     )
     parser.add_argument(
         "--verbose",
@@ -186,7 +199,7 @@ def main():
     candidates = load_candidates(args.candidates)
     print(f"Loaded {len(candidates):,} candidates\n")
 
-    rows = rank_candidates(candidates, verbose=args.verbose)
+    rows = rank_candidates(candidates, verbose=args.verbose, top_n=args.top)
 
     if args.preview:
         print_preview(rows)
