@@ -1,0 +1,57 @@
+team_name: "Kittu"
+
+primary_contact:
+  name: "Kritansh"
+  email: "tankkritansh088@gmail.com"
+  phone: "+919798019110"
+
+team_members:
+  - name: "Kritansh"
+    email: "tankkritansh088@gmail.com"
+    role: "Solo Participant"
+
+github_repo: "https://github.com/Kritansh-Tank/redrob-ranker" # TODO: fill in
+sandbox_link: "N/A - solo participant, sandbox pending" # TODO: add HuggingFace space if required
+
+reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
+
+compute:
+  platform: "Windows 11 Local Machine"
+  cpu_cores: 6
+  ram_gb: 24
+  python_version: "3.11"
+  os: "Windows 11 Home"
+  uses_gpu_for_inference: false
+  has_network_during_ranking: false
+  pre_computation_required: false
+  pre_computation_time_minutes: 0
+
+ai_tools_used:
+  - "Claude (Antigravity)"
+
+ai_usage_summary: |
+  Used Claude (Antigravity AI assistant) for architecture discussion, 
+  scoring component design, and code review. All scoring logic, 
+  skill keyword curation, and JD analysis was done with human oversight 
+  and engineering judgment. No candidate data was fed to any external LLM 
+  during the ranking step — ranking is fully deterministic and offline.
+
+methodology_summary: |
+  Rule-based multi-signal ranker with explicit scoring components.
+  Five weighted components: (1) Tier-based AI/ML skill matching (35%) 
+  using proficiency, endorsements, and usage duration as quality signals; 
+  (2) Title/headline/summary keyword scoring (20%); (3) Career depth 
+  scoring with YoE fit curve, startup experience, and production ML signals 
+  in role descriptions (15%); (4) Education tier and field relevance (5%); 
+  (5) India location fit (5%). A behavioral engagement multiplier (0.1–1.15x) 
+  derived from 10+ platform signals (recency, open-to-work, recruiter 
+  response rate, GitHub activity, notice period, salary fit) is applied 
+  multiplicatively to the base score. Honeypot detection uses 10 checks 
+  for impossible profile patterns. Runtime ~90s for 100K candidates on CPU.
+
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: true
+  reproduction_tested: true
